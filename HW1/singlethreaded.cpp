@@ -19,7 +19,7 @@ void eratosthenes(bool primes[], uint64_t n) {
     for (uint64_t i = 2; i <= n; i++) {
         if (primes[i]) {
             count++;
-            for (uint64_t j = i * i; j <= n; j += i) {
+            for (uint64_t j = i * i; j <= n; j += 2*i) {
                 primes[j] = false;
             }
         }
