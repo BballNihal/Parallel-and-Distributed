@@ -24,7 +24,7 @@ void eratosthenes(bool primes[], uint64_t n) {
 }
 
 int main() {
-    uint64_t n = 100;
+    uint64_t n = 1000000000;
     bool primes[n+1];
 
     // Call the function to fill the primes array
