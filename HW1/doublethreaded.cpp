@@ -30,7 +30,7 @@ void thread_func(vector<bool>& primes, uint64_t start, uint64_t end, uint64_t* p
 }
 
 int main() {
-    uint64_t n = 1000000000;
+    uint64_t n = 1000000;
     vector<bool> primes(n + 1, true); 
     primes[0] = primes[1] = false; 
 

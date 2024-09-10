@@ -12,7 +12,7 @@ void eratosthenesMultithread(vector<bool>& primes, uint64_t a ,uint64_t b, uint6
             if(i >= a){
                 count++;
             }
-            for (uint64_t j = i * i; j <= b; j += i) {
+            for (uint64_t j = max(i * i, (a + i - 1) / i * i); j <= b; j += i) {
                 primes[j] = false;
             }
         }
