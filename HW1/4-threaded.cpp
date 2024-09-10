@@ -29,7 +29,9 @@ int main() {
     //initialize variables and array
     uint64_t n = 100;
     vector<bool> primes(n+1, false);
-
+    for (uint64_t i = 2; i <= n; i++) {
+        primes[i] = true;
+    }
     uint64_t count1 = 0, count2 = 0, count3 = 0, count4 = 0, count = 0;
 
     thread t1(eratosthenesMultithread, ref(primes), 2 , n/4, &count1);
