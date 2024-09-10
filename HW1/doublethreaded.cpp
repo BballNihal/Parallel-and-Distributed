@@ -1,48 +1,58 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include <iostream>
+#include <thread>
+#include <vector>
+#include <cmath>
+#include <algorithm> // for std::max
 
-// 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
-// 0  0  1  0  1  0  1  1  1   0   1   0   1   1   1   0                               1
-// i=97
-//O(log log n)
+using namespace std;
 
-
-void eratosthenes(bool primes[], uint64_t n) {
-    uint64_t count = 0;
-
-    // Initialize the primes array
-    for (uint64_t i = 2; i <= n; i++) {
-        primes[i] = true;
-    }
+void eratosthenes(vector<bool>& primes, uint64_t start, uint64_t end) {
+    if (start < 2) start = 2; // Ensure start is at least 2
 
     // Sieve of Eratosthenes
-    for (uint64_t i = 2; i <= n; i++) {
+    for (uint64_t i = 2; i <= sqrt(end); i++) {
         if (primes[i]) {
-            count++;
-            for (uint64_t j = i * i; j <= n; j += i) {
+            // Start from the maximum of i*i or the first multiple in the range
+            for (uint64_t j = max(i * i, (start + i - 1) / i * i); j <= end; j += i) {
                 primes[j] = false;
             }
         }
     }
-    // Optional: Print the count of primes
-    // printf("Count of primes: %lu\n", count);
+}
+
+void thread_func(vector<bool>& primes, uint64_t start, uint64_t end) {
+    eratosthenes(primes, start, end);
 }
 
 int main() {
     uint64_t n = 100;
-    bool primes[n+1];
+    vector<bool> primes(n + 1, true); // Initializes all elements to true
+    primes[0] = primes[1] = false; // 0 and 1 are not primes
 
-    // Call the function to fill the primes array
-    eratosthenes(primes, n);
+    uint64_t mid = n / 2;
+
+    thread t1(thread_func, ref(primes), 2, mid); //start from 2 since 0,1 not prime
+    thread t2(thread_func, ref(primes), mid + 1, n);
+
+    t1.join();
+    t2.join();
+
+    uint64_t count = 0;
+    for (uint64_t i = 2; i <= n; i++) {
+        if (primes[i]) {
+            count++;
+        }
+    }
 
     // Print the primes
     for (uint64_t i = 2; i <= n; i++) {
         if (primes[i]) {
-            printf("%lu ", i);
+            cout << i << " ";
         }
     }
-    printf("\n");
+    cout << "\n";
+
+    cout << "# of primes up to " << n << ": " << count << '\n';
 
     return 0;
 }
