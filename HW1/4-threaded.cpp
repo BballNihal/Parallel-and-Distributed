@@ -7,7 +7,9 @@ using namespace std;
 
 void eratosthenesMultithread(vector<bool>& primes, uint64_t a ,uint64_t b, uint64_t* pcount) {
 
-    uint64_t count = 0;
+    uint64_t count = (a == 2 ? 1 : 0);
+
+    a |= 1;
 
     for (uint64_t i = a; i <= b; i++) {
         if (primes[i]) {
@@ -27,9 +29,7 @@ int main() {
     //initialize variables and array
     uint64_t n = 100;
     vector<bool> primes(n+1, false);
-    for (uint64_t i = 2; i <= n; i++) {
-        primes[i] = true;
-    }
+
     uint64_t count1 = 0, count2 = 0, count3 = 0, count4 = 0, count = 0;
 
     thread t1(eratosthenesMultithread, ref(primes), 2 , n/4, &count1);
