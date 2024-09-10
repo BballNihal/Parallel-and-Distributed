@@ -34,8 +34,8 @@ void eratosthenes(bool primes[], uint64_t n) {
     uint64_t sqrt_n = static_cast<uint64_t>(sqrt(n));
 
     // Use two threads to mark non-prime numbers
-    std::thread t1(mark_non_primes, primes, 3, sqrt_n / 2, n);
-    std::thread t2(mark_non_primes, primes, sqrt_n / 2 + 1, sqrt_n, n);
+    std::thread t1(mark_non_primes, primes, 3, n / 2, n);
+    std::thread t2(mark_non_primes, primes, n / 2 + 1, n, n);
 
     t1.join();
     t2.join();

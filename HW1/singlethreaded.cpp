@@ -40,7 +40,7 @@ void eratosthenes(bool primes[], uint64_t n) {
 }
 
 int main() {
-    uint64_t n = 1000000000; // 1 billion
+    uint64_t n = 100000000; // 1 billion
     bool *primes = new bool[n + 1]; // Dynamically allocate the primes array
 
     if (primes == NULL) {
