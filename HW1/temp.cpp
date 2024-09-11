@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <thread> // Include the thread library
+#include <thread> 
 #include <math.h>
 
 void mark_non_primes(bool primes[], uint64_t start, uint64_t end, uint64_t n) {
@@ -22,11 +22,11 @@ void eratosthenes(bool primes[], uint64_t n) {
         primes[i] = true;
     }
 
-    // Mark 0 and 1 as non-prime (special cases)
+    //0 1 not prime
     primes[0] = false;
     primes[1] = false;
 
-    // Mark all even numbers (except 2) as non-prime
+    //all evens set prime
     for (uint64_t i = 4; i <= n; i += 2) {
         primes[i] = false;
     }
@@ -51,18 +51,17 @@ void eratosthenes(bool primes[], uint64_t n) {
 }
 
 int main() {
-    uint64_t n = 1000000000; // 1 billion
-    bool *primes = new bool[n + 1]; // Dynamically allocate the primes array
+    uint64_t n = 1000000000; 
+    bool *primes = new bool[n + 1]; 
 
     if (primes == NULL) {
         printf("Memory allocation failed!\n");
         return 1;
     }
 
-    // Call the function to fill the primes array
+
     eratosthenes(primes, n);
 
-    // Free the allocated memory
     delete[] primes;
 
     return 0;

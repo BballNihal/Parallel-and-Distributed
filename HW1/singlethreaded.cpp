@@ -1,58 +1,52 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h> // C++ supports this header for bool type
+#include <iostream>
+#include <cmath>
+using namespace std;
 
 void eratosthenes(bool primes[], uint64_t n) {
-    uint64_t count = 0;
+    uint64_t count = (n / 2) + 1; //odd numbers only. account for 2 here
+    cout << count << endl;
 
-    // Initialize the primes array: mark all as prime initially
-    for (uint64_t i = 0; i <= n; i++) {
+    // set all prime
+    for (uint64_t i = 0; i <= n / 2; i++) {
         primes[i] = true;
     }
 
-    // Mark 0 and 1 as non-prime (special cases)
+    //set 0 prime
     primes[0] = false;
-    primes[1] = false;
+    count--;
+    cout << count << endl;
 
-    // Mark all even numbers (except 2) as non-prime
-    for (uint64_t i = 4; i <= n; i += 2) {
-        primes[i] = false;
-    }
-
-    // Sieve of Eratosthenes starting from 3 and skipping even numbers
-    for (uint64_t i = 3; i * i <= n; i += 2) {
+    //start iterating from value 3
+    for (uint64_t i = 1; 2 * i + 1 <= n; i++) {
         if (primes[i]) {
-            // Mark all odd multiples of i as non-prime
-            for (uint64_t j = i * i; j <= n; j += 2 * i) {
-                primes[j] = false;
+            uint64_t prime = 2 * i + 1;
+            //all odd mults of prime are non prime
+            for (uint64_t j = prime * prime; j <= n; j += 2 * prime) {
+                    if (primes[j/2] == true){
+                        primes[j / 2] = false;
+                        count--;
+                    }
             }
         }
     }
 
-    // Count the number of primes
-    for (uint64_t i = 2; i <= n; i++) {
-        if (primes[i]) {
-            count++;
-        }
-    }
+    //print all primes
+    // cout << "2" << " ";
+    // for (uint64_t i = 0; i <= n/2 -1; i++) {
+    //     if (primes[i]) {
+    //         cout << 2*i+1 << " ";
+    //     }
+    // }
 
+    //print count
     printf("Count of primes: %lu\n", count);
 }
 
 int main() {
-    uint64_t n = 100000000; // 1 billion
-    bool *primes = new bool[n + 1]; // Dynamically allocate the primes array
-
-    if (primes == NULL) {
-        printf("Memory allocation failed!\n");
-        return 1;
-    }
-
-    // Call the function to fill the primes array
+    uint64_t n = 1000000000;
+    bool *primes = new bool[(n / 2) + 1]; 
     eratosthenes(primes, n);
-
-    // Free the allocated memory
-    delete[] primes;
-
     return 0;
+
+    delete primes;
 }
