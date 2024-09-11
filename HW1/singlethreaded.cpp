@@ -1,3 +1,5 @@
+//Author : Nihal Abdul Muneer and Thomas Vu
+
 #include <iostream>
 #include <cmath>
 using namespace std;
