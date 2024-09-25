@@ -62,20 +62,16 @@ uint64_t segmentedSieve(uint64_t n) {
         }
     }
 
-    uint64_t quarter = n / 4;
-    uint64_t count1 = 0, count2 = 0, count3 = 0, count4 = 0;
+    uint64_t mid = n / 2;
+    uint64_t count1 = 0, count2 = 0;
 
-    thread t1(segmentedSievePart, limit, quarter, ref(primes), ref(count1));
-    thread t2(segmentedSievePart, quarter, 2 * quarter, ref(primes), ref(count2));
-    thread t3(segmentedSievePart, 2 * quarter, 3 * quarter, ref(primes), ref(count3));
-    thread t4(segmentedSievePart, 3 * quarter, n, ref(primes), ref(count4));
+    thread t1(segmentedSievePart, limit, mid, ref(primes), ref(count1));
+    thread t2(segmentedSievePart, mid, n, ref(primes), ref(count2));
 
     t1.join();
     t2.join();
-    t3.join();
-    t4.join();
 
-    return count + count1 + count2 + count3 + count4;
+    return count + count1 + count2;
 }
 
 int main() {
