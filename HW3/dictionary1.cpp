@@ -33,6 +33,17 @@ public:
             if (book > dict[word].last_book)
                 dict[word].last_book = book;        }
     }
+
+    void print() const {
+        for (const auto& entry : dict) {
+            cout << "Word: " << entry.first
+                 << ", Count: " << entry.second.count
+                 << ", In Books: " << entry.second.in_books
+                 << ", Last Book: " << entry.second.last_book
+                 << endl;
+        }
+    }
+
 };
 
 
@@ -49,7 +60,7 @@ void openfile(const fs::path& path, int book_num) {
         return;
     }
     // for each word in the file, lower case it and add it to the dictionary
-
+    cout <<"in book : " << book_num << endl;
     string word;
     while (file >> word) {
         // hyph-enated
@@ -58,8 +69,11 @@ void openfile(const fs::path& path, int book_num) {
         transform(word.begin(), word.end(), word.begin(), [](unsigned char c) { return std::tolower(c); });
 
         d.add_word(word, book_num);
+
     }
 }
+
+
 int main(int argc, char* argv[]) {
     string path = argv[1];
 
@@ -74,6 +88,8 @@ int main(int argc, char* argv[]) {
     } catch (const fs::filesystem_error& err) {
         std::cerr << "Filesystem error: " << err.what() << std::endl;
     }
+
+    d.print();
     
     return 0;
 }
