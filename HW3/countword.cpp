@@ -3,33 +3,38 @@
 #include <unordered_map>
 #include <string>
 #include <algorithm>
+#include <filesystem>
 using namespace std;
+
 
 struct word_info {
     uint64_t count; // total number of times the word was found
     uint32_t in_books; // in how many books
     int32_t last_book; // number of last book it was found in
 };
-// "the"  last_book: -1 in_book = 1  count = 1 last_book = 1
-// "the"  book: 2  last_book = 1, count = 2 last_book = 2
+// in_book = 0 , count = 0,last_book: -1
+// found "the"  in_books = 1  count = 1 last_book = 1
+// found "the"  in_books: 2  last_book = 1, count = 2 last_book = 2
 class Dict {
 private:
     unordered_map<string, word_info> dict;
 public:
     Dict() {}
+
     void add_word(const string& word, int book) {
+
+        // Adds a new entry if the word is not in dictionary
         if (dict.find(word) == dict.end()) {
             dict[word] = { 1, 1, book };
         }
         else {
+            // adds word into count and updates last book if word is already in dictionary
             dict[word].count++;
             if (book > dict[word].last_book)
                 dict[word].last_book = book;        }
     }
 };
 
-#include <iostream>
-#include <filesystem>
 
 namespace fs = std::filesystem;
 

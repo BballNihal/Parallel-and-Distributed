@@ -14,7 +14,7 @@ int main() {
     dict2["hello"] = 1;
     dict2["and"] = 19;
 
-
+    // printing values in dictionary
     for (auto it = dict1.begin(); it != dict1.end(); it++) {
         cout << it->first << " " << it->second << '\t';
     }
@@ -23,6 +23,8 @@ int main() {
         cout << it->first << " " << it->second << '\t';
     }
 
+
+    //merging dictionaries
     for (auto it = dict1.begin(); it != dict1.end(); it++) {
         if (dict2.find(it->first) == dict2.end()) { // if 2nd dictionary does not contain this word
             dict2[it->first] = it->second; // add it to the dictionary
