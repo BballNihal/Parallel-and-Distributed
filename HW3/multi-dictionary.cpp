@@ -1,6 +1,8 @@
 //Author: Thomas Vu and Nihal Abdul Muneer
-// takes command line arguements - [path to books folder] [number of threads]
+// takes command line arguements - [path to books folder] [number of threads] ||| ./<executable> <path/to/books> <thread-count>
 //outputs top 300 most frequent words,dictionary size and time to completion
+
+//EXTRA CREDIT: better parsing starting line 172
 
 #include <iostream>
 #include <fstream>
