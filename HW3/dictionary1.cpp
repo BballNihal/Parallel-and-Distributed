@@ -1,3 +1,8 @@
+//Author: Thomas Vu and Nihal Abdul Muneer
+// takes command line arguements - [path to books folder]
+//outputs top 300 most frequent words,dictionary size and time to completion
+
+
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
@@ -5,6 +10,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <thread>
+#include <chrono>
 using namespace std;
 
 
@@ -140,6 +146,7 @@ public:
     void outPrint(int n){
         singleDelete();
         topPrint(n);
+        cout << "Dictionary size " << dict.size() << endl;
     }
 };
 
@@ -176,6 +183,8 @@ int main(int argc, char* argv[]) {
     string path = argv[1];
 
     int book_num = 0;
+    auto t0 = std::chrono::high_resolution_clock::now();
+
     try {
         for (const auto& entry : fs::directory_iterator(path)) {
             if (entry.is_regular_file() && entry.path().extension() == ".txt") {
@@ -188,7 +197,8 @@ int main(int argc, char* argv[]) {
     }
 
     d.outPrint(300);
-
-
+    auto t1 = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);
+        cout << "single dictionary time : " << elapsed.count() << " usec \n" ;
     return 0;
 }

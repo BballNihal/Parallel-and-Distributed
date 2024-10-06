@@ -1,3 +1,7 @@
+//Author: Thomas Vu and Nihal Abdul Muneer
+// takes command line arguements - [path to books folder] [number of threads]
+//outputs top 300 most frequent words,dictionary size and time to completion
+
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
@@ -5,6 +9,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <thread>
+#include <chrono>
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -140,6 +145,7 @@ public:
     void outPrint(int n){
         singleDelete();
         topPrint(n);
+        cout << "Dictionary size " << dict.size() << endl;
     }
 
     void mergeDictionary (const Dict& other){
@@ -155,6 +161,7 @@ public:
             }
         }
     }
+
 };
 
 
@@ -166,7 +173,7 @@ void openfile(const fs::path& path, int book_num, Dict& d) {
         return;
     }
     // for each word in the file, lower case it and add it to the dictionary
-    cout <<"in book : " << book_num << endl;
+    // cout <<"in book : " << book_num << endl;
     string word;
     while (file >> word) {
         // hyph-enated
@@ -203,7 +210,7 @@ int main(int argc, char* argv[]) {
     int num_files_per_thread = files.size() / t;
     vector<Dict> dicts(t);
     vector<thread> threads;
-
+   auto t0 = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < t; ++i) {
         vector<fs::path> sub_files(files.begin() + i * num_files_per_thread, files.begin() + (i == t - 1 ? files.size() : (i + 1) * num_files_per_thread));
         threads.emplace_back(process_files, sub_files, ref(dicts[i]), i * num_files_per_thread);
@@ -218,6 +225,10 @@ int main(int argc, char* argv[]) {
         combined_dict.mergeDictionary(d);
     }
 
+ 
     combined_dict.outPrint(300); 
+    auto t1 = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0);
+    cout << "Multithread dictionary time : " << elapsed.count() << " usec \n" ;
     return 0;
 }
