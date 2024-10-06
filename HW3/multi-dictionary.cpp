@@ -10,6 +10,9 @@
 #include <filesystem>
 #include <thread>
 #include <chrono>
+#include <cctype> // for std::isalnum
+#include <sstream> // for std::stringstream
+
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -85,7 +88,8 @@ public:
             // adds word into count and updates last book if word is already in dictionary
             dict[word].count++;
             if (book > dict[word].last_book)
-                dict[word].last_book = book;        }
+                dict[word].last_book = book;        
+        }
     }
 
     //prints all entries
@@ -164,6 +168,21 @@ public:
 
 };
 
+// Improved word parsing function
+string clean_word(const string& input) {
+    string cleaned;
+    for (char c : input) {
+        if (isalnum(c) || c == '-') { // Keep only alphanumeric characters and hyphens
+            cleaned += tolower(c);
+        }
+    }
+
+    // Remove leading and trailing hyphens
+    if (cleaned.front() == '-') cleaned.erase(0, 1);
+    if (cleaned.back() == '-') cleaned.pop_back();
+    
+    return cleaned;
+}
 
 void openfile(const fs::path& path, int book_num, Dict& d) {
 
@@ -172,17 +191,15 @@ void openfile(const fs::path& path, int book_num, Dict& d) {
         std::cerr << "Failed to open file: " << path << std::endl;
         return;
     }
-    // for each word in the file, lower case it and add it to the dictionary
-    // cout <<"in book : " << book_num << endl;
+
     string word;
     while (file >> word) {
-        // hyph-enated
-        // Chrises'
-        //  132nd 
-        transform(word.begin(), word.end(), word.begin(), [](unsigned char c) { return std::tolower(c); });
+        // Apply the cleaning function
+        string cleaned_word = clean_word(word);
 
-        d.add_word(word, book_num);
-
+        if (!cleaned_word.empty()) {
+            d.add_word(cleaned_word, book_num);
+        }
     }
 }
 

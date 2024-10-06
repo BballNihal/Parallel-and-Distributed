@@ -1,6 +1,8 @@
 //Author: Thomas Vu and Nihal Abdul Muneer
-// takes command line arguements - [path to books folder]
+// takes command line arguements - [path to books folder] ||| ./<executable> <path/to/books>
 //outputs top 300 most frequent words,dictionary size and time to completion
+
+//EXTRA CREDIT: In depth parser at line 160
 
 
 #include <iostream>
@@ -11,6 +13,8 @@
 #include <filesystem>
 #include <thread>
 #include <chrono>
+#include <cctype>
+#include <regex>  // For regular expression
 using namespace std;
 
 
@@ -153,8 +157,10 @@ public:
 
 namespace fs = std::filesystem;
 
-// open a single dictionary
+//open a single dictionary
 Dict d;
+
+//Parsing done here
 
 void openfile(const fs::path& path, int book_num) {
 
@@ -163,18 +169,32 @@ void openfile(const fs::path& path, int book_num) {
         std::cerr << "Failed to open file: " << path << std::endl;
         return;
     }
-    // for each word in the file, lower case it and add it to the dictionary
-
-    cout <<"in book : " << book_num << endl;
+    
+    cout << "in book : " << book_num << endl;
     string word;
+
     while (file >> word) {
-        // hyph-enated
-        // Chrises'
-        //  132nd 
-        transform(word.begin(), word.end(), word.begin(), [](unsigned char c) { return std::tolower(c); });
+        //cleans and mnormalizes
+        string cleaned_word;
+        bool has_alpha = false;  //checks if word has at least one alphabet character
 
-        d.add_word(word, book_num);
+        for (char c : word) {
+            if (isalpha(c)) {
+                //convert to lowercase and append
+                cleaned_word += tolower(c);
+                has_alpha = true;
+            } else if (c == '-' || c == '\'') {
+                //keeps internal hyphen or apostrophe only if it's between letters
+                if (!cleaned_word.empty() && isalpha(cleaned_word.back())) {
+                    cleaned_word += c;
+                }
+            }
+        }
 
+        //add the cleaned word to the dictionary
+        if (has_alpha && !cleaned_word.empty()) {
+            d.add_word(cleaned_word, book_num);
+        }
     }
 }
 
