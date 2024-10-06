@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <filesystem>
+#include <thread>
 using namespace std;
 
 
@@ -18,6 +19,54 @@ struct word_info {
 class Dict {
 private:
     unordered_map<string, word_info> dict;
+
+    void merge(vector<pair<string, word_info>>& vec, int left, int mid, int right) const {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        vector<pair<string, word_info>> L(vec.begin() + left, vec.begin() + mid + 1);
+        vector<pair<string, word_info>> R(vec.begin() + mid + 1, vec.begin() + right + 1);
+
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) {
+            if (L[i].second.count >= R[j].second.count) {
+                vec[k++] = L[i++];
+            } else {
+                vec[k++] = R[j++];
+            }
+        }
+
+        while (i < n1) {
+            vec[k++] = L[i++];
+        }
+
+        while (j < n2) {
+            vec[k++] = R[j++];
+        }
+    }
+
+    void merge_sort(vector<pair<string, word_info>>& vec, int left, int right) const {
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+
+            // Limit depth of threading to avoid excessive thread creation
+            if (right - left < 1000) {
+                // Perform sequential merge sort for small segments
+                merge_sort(vec, left, mid);
+                merge_sort(vec, mid + 1, right);
+            } else {
+                // Create threads for parallel sorting
+                std::thread t1(&Dict::merge_sort, this, std::ref(vec), left, mid);
+                std::thread t2(&Dict::merge_sort, this, std::ref(vec), mid + 1, right);
+
+                // Wait for threads to complete
+                t1.join();
+                t2.join();
+            }
+            merge(vec, left, mid, right);
+        }
+    }
+
 public:
     Dict() {}
 
@@ -34,6 +83,7 @@ public:
                 dict[word].last_book = book;        }
     }
 
+    //prints all entries
     void print() const {
         for (const auto& entry : dict) {
             cout << "Word: " << entry.first
@@ -43,13 +93,60 @@ public:
                  << endl;
         }
     }
+    
+    //finds a word and prints it
+    void print(const string& word) const {
+        auto it = dict.find(word);
+        if (it != dict.end()) {
+            cout << "Word: " << it->first
+                 << ", Count: " << it->second.count
+                 << ", In Books: " << it->second.in_books
+                 << ", Last Book: " << it->second.last_book
+                 << endl;
+        } else {
+            cout << "Word \"" << word << "\" not found in dictionary." << endl;
+        }
+    }
 
+    //removes entries with one count
+    void singleDelete() {
+        for (auto it = dict.begin(); it != dict.end(); ) {
+            if (it->second.count == 1) {
+                it = dict.erase(it);  // Erase and move to next element
+            } else {
+                ++it;  // Move to next element
+            }
+        }
+    }
+    
+    //prints the top n words
+    void topPrint(int n) const {
+        // Create a vector of pairs to sort by count
+        vector<pair<string, word_info>> sorted_words(dict.begin(), dict.end());
+
+        // Sort the vector by count in descending order
+        merge_sort(sorted_words, 0, sorted_words.size() - 1);
+
+        // Print the top n words
+        for (int i = 0; i < n && i < sorted_words.size(); ++i) {
+            cout << "Word: " << sorted_words[i].first
+                 << ", Count: " << sorted_words[i].second.count
+                 << ", In Books: " << sorted_words[i].second.in_books
+                 << ", Last Book: " << sorted_words[i].second.last_book
+                 << endl;
+        }
+    }
+    
+    void outPrint(int n){
+        singleDelete();
+        topPrint(n);
+    }
 };
 
 
 namespace fs = std::filesystem;
 
-// open a single book
+// open a single dictionary
 Dict d;
 
 void openfile(const fs::path& path, int book_num) {
@@ -60,6 +157,7 @@ void openfile(const fs::path& path, int book_num) {
         return;
     }
     // for each word in the file, lower case it and add it to the dictionary
+
     cout <<"in book : " << book_num << endl;
     string word;
     while (file >> word) {
@@ -89,7 +187,8 @@ int main(int argc, char* argv[]) {
         std::cerr << "Filesystem error: " << err.what() << std::endl;
     }
 
-    d.print();
-    
+    d.outPrint(300);
+
+
     return 0;
 }
