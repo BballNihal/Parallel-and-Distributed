@@ -17,7 +17,7 @@
 // Transposed identity matrix with 4 threads took 0.094149 seconds.
 // Transposed identity matrix with 8 threads took 0.0739982 seconds.
 
-// THIS IS DONE ON 4 CORE PROCESSOR WITH HYPERTHREADING (4 LOGICAL PROCESSORS)
+// THIS IS DONE ON 4 CORE PROCESSOR WITH HYPERTHREADING (8LOGICAL PROCESSORS)
 //hyperthreading does result in a performance boost
 
 #include <iostream>
